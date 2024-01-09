@@ -12,25 +12,42 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var googleMapView: GMSMapView!
     var gmsCameraPosition : GMSCameraPosition?
-    var bitcodeMarker : GMSMarker? = GMSMarker(
-        position: CLLocationCoordinate2D(latitude: 18.5091, longitude: 73.8326))
+    var delhiPosition : CLLocationCoordinate2D?
+    var bitcodeMarker : GMSMarker?
+    var delhiMarker : GMSMarker?
+    var gmsCircle : GMSCircle?
+    var radiusOfCircle : CLLocationDistance?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        bitcodeMarker = GMSMarker(
+            position: CLLocationCoordinate2D(latitude: 18.5091, longitude: 73.8326))
+        
+        delhiPosition = CLLocationCoordinate2D(latitude: 28.7041, longitude: 77.1025)
+        delhiMarker = GMSMarker(position: delhiPosition!)
+        
         initializeSettingsForGoogleMaps()
-        initializeCameraSettings()
+        initializeMarker(marker: delhiMarker!)
+        initializeMarker(marker: bitcodeMarker!)
+        settingCameraPosition(position: bitcodeMarker!.position)
+        drawCircleOnMap(position: bitcodeMarker!.position, radius: 20.0)
+//        drawPolygonOnMap()
+//        drawPolylineOnMap()
     }
     
-    func initializeCameraSettings(){
-       gmsCameraPosition = GMSCameraPosition(target: bitcodeMarker!.position, zoom: 20.0)
-        bitcodeMarker?.snippet = "Bitcode"
-        bitcodeMarker?.rotation = 45.0
-        bitcodeMarker?.opacity = 1
+    func initializeMarker(marker : GMSMarker){
+        marker.snippet = "Bitcode Tech"
+        marker.rotation = 45.0
+        marker.opacity = 1
         //bitcodeMarker?.icon = UIImage(named: "flag")
-        bitcodeMarker?.isDraggable = true
-        bitcodeMarker?.title = "IT Training"
-        bitcodeMarker?.zIndex = 5
-        bitcodeMarker?.map = googleMapView
+        marker.isDraggable = true
+        marker.title = "Bitcode"
+        marker.zIndex = 5
+        marker.map = googleMapView
+    }
+    
+    func settingCameraPosition(position : CLLocationCoordinate2D){
+        gmsCameraPosition = GMSCameraPosition(target : position, zoom: 20.0)
         googleMapView.camera = gmsCameraPosition!
     }
 
@@ -46,6 +63,26 @@ class ViewController: UIViewController {
         googleMapView.isMyLocationEnabled = true
         googleMapView.mapType = .normal
     }
+    
+    func drawCircleOnMap(position : CLLocationCoordinate2D, radius : CLLocationDistance){
+        gmsCircle = GMSCircle(
+            position: position,
+            radius: radius)
+        gmsCircle?.zIndex = 10
+        gmsCircle?.title = "Bitcode Tech"
+        gmsCircle?.fillColor = .lightGray
+        gmsCircle?.strokeColor = .brown
+        gmsCircle?.strokeWidth = 5.0
+        gmsCircle?.map = googleMapView
+    }
+    
+//    func drawPolygonOnMap(){
+//
+//    }
+//
+//    func drawPolylineOnMap(){
+//
+//    }
 }
 
 extension ViewController : GMSMapViewDelegate{
