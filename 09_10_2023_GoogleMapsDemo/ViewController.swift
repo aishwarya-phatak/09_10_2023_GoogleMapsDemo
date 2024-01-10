@@ -13,35 +13,40 @@ class ViewController: UIViewController {
     @IBOutlet weak var googleMapView: GMSMapView!
     var gmsCameraPosition : GMSCameraPosition?
     var delhiPosition : CLLocationCoordinate2D?
-    var bitcodeMarker : GMSMarker?
+    var bitcodeMarker : GMSMarker = GMSMarker(
+        position: CLLocationCoordinate2D(
+            latitude: 18.5091,
+            longitude: 73.8326))
     var delhiMarker : GMSMarker?
     var gmsCircle : GMSCircle?
     var radiusOfCircle : CLLocationDistance?
+    var gmsPolygon : GMSPolygon?
+    var gmsPolyline : GMSPolyline?
+    var gmsMutablePathForPolygon : GMSMutablePath?
+    var gmsMutablePathForPolyline : GMSMutablePath?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        bitcodeMarker = GMSMarker(
-            position: CLLocationCoordinate2D(latitude: 18.5091, longitude: 73.8326))
         
         delhiPosition = CLLocationCoordinate2D(latitude: 28.7041, longitude: 77.1025)
         delhiMarker = GMSMarker(position: delhiPosition!)
         
         initializeSettingsForGoogleMaps()
         initializeMarker(marker: delhiMarker!)
-        initializeMarker(marker: bitcodeMarker!)
-        settingCameraPosition(position: bitcodeMarker!.position)
-        drawCircleOnMap(position: bitcodeMarker!.position, radius: 20.0)
-//        drawPolygonOnMap()
-//        drawPolylineOnMap()
+        initializeMarker(marker: bitcodeMarker)
+        settingCameraPosition(position: bitcodeMarker.position)
+//        drawCircleOnMap(position: bitcodeMarker!.position, radius: 20.0)
+        drawPolygonOnMap()
+        drawPolylineOnMap()
     }
     
     func initializeMarker(marker : GMSMarker){
-        marker.snippet = "Bitcode Tech"
+        //marker.snippet = "Bitcode Tech"
         marker.rotation = 45.0
         marker.opacity = 1
         //bitcodeMarker?.icon = UIImage(named: "flag")
         marker.isDraggable = true
-        marker.title = "Bitcode"
+        //marker.title = "Bitcode"
         marker.zIndex = 5
         marker.map = googleMapView
     }
@@ -76,15 +81,94 @@ class ViewController: UIViewController {
         gmsCircle?.map = googleMapView
     }
     
-//    func drawPolygonOnMap(){
-//
-//    }
-//
-//    func drawPolylineOnMap(){
-//
-//    }
+    func drawPolygonOnMap(){
+        gmsMutablePathForPolygon = GMSMutablePath()
+        gmsMutablePathForPolygon?.add(CLLocationCoordinate2D(latitude: 19.9975, longitude: 73.7898))
+        gmsMutablePathForPolygon?.add(CLLocationCoordinate2D(latitude: 19.8762, longitude: 75.3433))
+        gmsMutablePathForPolygon?.add(CLLocationCoordinate2D(latitude: 17.6599, longitude: 75.9064))
+        gmsMutablePathForPolygon?.add(CLLocationCoordinate2D(latitude: 18.5204, longitude: 73.8567))
+        gmsPolygon = GMSPolygon(path: gmsMutablePathForPolygon)
+        gmsPolygon?.strokeWidth = 10.0
+        gmsPolygon?.strokeColor = .brown
+        gmsPolygon?.fillColor = .lightGray
+        gmsPolygon?.title = "Cities In Maharashtra"
+        gmsPolygon?.zIndex = 5
+        gmsPolygon?.map = googleMapView
+    }
+
+    func drawPolylineOnMap(){
+        gmsMutablePathForPolyline = GMSMutablePath()
+        gmsMutablePathForPolyline?.add(CLLocationCoordinate2D(latitude: 20.3839, longitude: 78.1307))
+        gmsMutablePathForPolyline?.add(CLLocationCoordinate2D(latitude: 21.1458, longitude: 79.0882))
+        gmsMutablePathForPolyline?.add(CLLocationCoordinate2D(latitude: 19.9615, longitude: 79.2961))
+        gmsMutablePathForPolyline?.add(CLLocationCoordinate2D(latitude: 19.6766, longitude: 78.5321))
+        gmsMutablePathForPolyline?.add(CLLocationCoordinate2D(latitude: 20.3839, longitude: 78.1307))
+        
+        gmsPolyline = GMSPolyline(path: gmsMutablePathForPolyline)
+        gmsPolyline?.strokeColor = .blue
+        gmsPolyline?.strokeWidth = 20.0
+        gmsPolyline?.title = "Cities"
+        gmsPolyline?.zIndex = 10
+        gmsPolyline?.map = googleMapView
+    }
 }
 
 extension ViewController : GMSMapViewDelegate{
+    func mapView(_ mapView: GMSMapView, markerInfoWindow marker: GMSMarker) -> UIView? {
+        
+        let infoWindowRect = CGRect(
+            x: 0,
+            y: 0,
+            width: 400,
+            height: 200)
+        
+        var infoWindowView = UIView(frame: infoWindowRect)
+        infoWindowView.backgroundColor = .cyan
+        
+        let labelOneRect = CGRect(
+            x: 40,
+            y: 40,
+            width: infoWindowView.frame.width - 60,
+            height: 40)
+        var labelOne = UILabel(frame: labelOneRect)
+        labelOne.text = "Welcome"
+        labelOne.backgroundColor = .lightGray
+        labelOne.textColor = .black
+        
+        let labelTwoRect = CGRect(
+            x: 40,
+            y: 120,
+            width: labelOneRect.width,
+            height: 40)
+        var labelTwo = UILabel(frame: labelTwoRect)
+        labelTwo.text = "Bitcode"
+        labelTwo.backgroundColor = .lightGray
+        labelTwo.textColor = .black
+        
+        infoWindowView.addSubview(labelOne)
+        infoWindowView.addSubview(labelTwo)
+        
+        return infoWindowView
+    }
     
+    
+    func mapView(_ mapView: GMSMapView, didBeginDragging marker: GMSMarker) {
+        print(marker.position)
+    }
+    
+    func mapView(_ mapView: GMSMapView, didDrag marker: GMSMarker) {
+        print(marker.position)
+    }
+    
+    func mapView(_ mapView: GMSMapView, didEndDragging marker: GMSMarker) {
+        print(marker.position)
+    }
+    
+    func mapView(_ mapView: GMSMapView, didLongPressAt coordinate: CLLocationCoordinate2D) {
+        print("long press -- \(coordinate.latitude) -- \(coordinate.longitude)")
+    }
+    
+    func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
+        print("did Tap At --\(coordinate.latitude) -- \(coordinate.longitude)")
+    }
 }
