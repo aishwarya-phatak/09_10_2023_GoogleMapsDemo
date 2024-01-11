@@ -28,6 +28,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         delhiPosition = CLLocationCoordinate2D(latitude: 28.7041, longitude: 77.1025)
         delhiMarker = GMSMarker(position: delhiPosition!)
         
@@ -52,11 +53,12 @@ class ViewController: UIViewController {
     }
     
     func settingCameraPosition(position : CLLocationCoordinate2D){
-        gmsCameraPosition = GMSCameraPosition(target : position, zoom: 20.0)
+        gmsCameraPosition = GMSCameraPosition(target : position, zoom: 10.0)
         googleMapView.camera = gmsCameraPosition!
     }
 
     func initializeSettingsForGoogleMaps(){
+        googleMapView.delegate = self   //important
         googleMapView.settings.myLocationButton = true
         googleMapView.settings.compassButton = true
         googleMapView.settings.zoomGestures = true
@@ -114,21 +116,25 @@ class ViewController: UIViewController {
 }
 
 extension ViewController : GMSMapViewDelegate{
+    func mapView(_ mapView: GMSMapView, didCloseInfoWindowOf marker: GMSMarker) {
+        print("close info window")
+    }
     func mapView(_ mapView: GMSMapView, markerInfoWindow marker: GMSMarker) -> UIView? {
         
         let infoWindowRect = CGRect(
             x: 0,
             y: 0,
-            width: 400,
-            height: 200)
+            width: 200,
+            height: 160)
         
         var infoWindowView = UIView(frame: infoWindowRect)
+        
         infoWindowView.backgroundColor = .cyan
         
         let labelOneRect = CGRect(
-            x: 40,
-            y: 40,
-            width: infoWindowView.frame.width - 60,
+            x: 20,
+            y: 20,
+            width: 140,
             height: 40)
         var labelOne = UILabel(frame: labelOneRect)
         labelOne.text = "Welcome"
@@ -136,9 +142,9 @@ extension ViewController : GMSMapViewDelegate{
         labelOne.textColor = .black
         
         let labelTwoRect = CGRect(
-            x: 40,
-            y: 120,
-            width: labelOneRect.width,
+            x: 20,
+            y: 100,
+            width: 140,
             height: 40)
         var labelTwo = UILabel(frame: labelTwoRect)
         labelTwo.text = "Bitcode"
@@ -170,5 +176,13 @@ extension ViewController : GMSMapViewDelegate{
     
     func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
         print("did Tap At --\(coordinate.latitude) -- \(coordinate.longitude)")
+    }
+    
+    func mapView(_ mapView: GMSMapView, didTapInfoWindowOf marker: GMSMarker) {
+        print("Did tap info window")
+    }
+    
+    func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
+        return true
     }
 }
